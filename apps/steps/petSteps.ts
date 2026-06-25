@@ -10,12 +10,14 @@ export class PetSteps {
       const pets = resp.json() as { status: string }[];
 
       check(resp, { "status equals 200": (r) => r.status === 200 });
-      check(resp, { 'all pets have available status': () => pets.every(pet => pet.status === 'available'), });
+      check(resp, {
+        "all pets have available status": () =>
+          pets.every((pet) => pet.status === "available"),
+      });
 
       const randomPet = randomItem(resp.json());
       const availablePetId: number = randomPet.id;
 
-      console.log(`Found Available Pet ID: ${availablePetId}`);
       return { ...stepData, availablePetId };
     });
   }
@@ -26,12 +28,14 @@ export class PetSteps {
       const pets = resp.json() as { status: string }[];
 
       check(resp, { "status equals 200": (r) => r.status === 200 });
-      check(resp, { 'all pets have sold status': () => pets.every(pet => pet.status === 'sold'), });
+      check(resp, {
+        "all pets have sold status": () =>
+          pets.every((pet) => pet.status === "sold"),
+      });
 
       const randomPet = randomItem(resp.json());
       const soldPetId: number = randomPet.id;
 
-      console.log(`Found Sold Pet ID: ${soldPetId}`);
       return { ...stepData, soldPetId };
     });
   }
@@ -41,13 +45,17 @@ export class PetSteps {
       const resp = requestManager.petService.findPetsByStatus("pending");
       const pets = resp.json() as { status: string }[];
 
-      check(resp, { "status equals 200": (r) => r.status === 200 });
-      check(resp, { 'all pets have pending status': () => pets.every(pet => pet.status === 'pending'), });
+      check(resp, {
+        "status equals 200": (r) => r.status === 200,
+      });
+      check(resp, {
+        "all pets have pending status": () =>
+          pets.every((pet) => pet.status === "pending"),
+      });
 
       const randomPet = randomItem(resp.json());
       const pendingPetId: number = randomPet.id;
 
-      console.log(`Found Pending Pet ID: ${pendingPetId}`);
       return { ...stepData, pendingPetId };
     });
   }
@@ -57,13 +65,12 @@ export class PetSteps {
     return group("Get Pet By Id", function () {
       const resp = requestManager.petService.findPetsById(pendingPetId);
 
-      check(resp, { "status equals 200": (r) => r.status === 200 });
-       check(resp, {
-        "Check pet is found by Id": (r) =>
-          r.json("id") === pendingPetId,
+      check(resp, {
+        "status equals 200": (r) => r.status === 200,
       });
-
-      console.log(`Found Pending Pet Id: ${resp.body}`);
+      check(resp, {
+        "Check pet is found by Id": (r) => r.json("id") === pendingPetId,
+      });
     });
   }
 }

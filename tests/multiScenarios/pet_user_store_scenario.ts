@@ -1,21 +1,60 @@
-import { stepsManager } from "../../apps/stepsManager.ts"
+import { Gauge } from "k6/metrics";
+// @ts-ignore
+import { default as storeFlow } from "../scenarios/storeScenarios.ts";
+// @ts-ignore
+import { default as userFlow } from "../scenarios/userScenarios.ts";
+// @ts-ignore
+import { default as petFlow } from "../scenarios/viewPendingPetFlow.ts";
+
+export const testDuration = new Gauge("test_duration");
+const testNameTag = `storeFlow + userFlow + petFlow`;
 
 export const options = {
-  vus: 1,
-  iterations: 1,
+  tags: {
+    testRun: testNameTag,
+  },
+  scenarios: {
+    StoreScenario: {
+      exec: "StoreScenario",
+      executor: "shared-iterations",
+      vus: 1,
+      iterations: 1,
+    },
+
+    UserScenario: {
+      exec: "UserScenario",
+      executor: "shared-iterations",
+      vus: 1,
+      iterations: 1,
+    },
+    PetScenario: {
+      exec: "PetScenario",
+      executor: "shared-iterations",
+      vus: 1,
+      iterations: 1,
+    },
+  },
 };
 
-export default function() {
+// setup
+export function setup() {
+  return { testStart: Date.now() };
+}
 
-const availablePet = stepsManager.petSteps.getAvailablePets()
-const pendingPet = stepsManager.petSteps.getPendingPets(availablePet)
-const soldPet = stepsManager.petSteps.getSoldPets(pendingPet)
-const createdUser = stepsManager.createUser.execute()
-const userInfo = stepsManager.getUserByUserName.execute(createdUser)
-const updatedUser = stepsManager.updateUser.execute(userInfo)
-const viewUser = stepsManager.getUserByUserName.execute({...updatedUser, userName:updatedUser.updatedUserName})
-const deletedUser = stepsManager.deleteUser.execute(viewUser)
-const createOrder = stepsManager.storeSteps.createOrder()
-const orderInfo = stepsManager.storeSteps.getOrderByOrderId(createOrder)
+export function StoreScenario() {
+  return storeFlow();
+}
 
+export function UserScenario() {
+  return userFlow();
+}
+export function PetScenario() {
+  return petFlow();
+}
+
+// teardown
+export function teardown(data: { testStart: number }) {
+  const testEnd = Date.now();
+  const durationSec = (testEnd - data.testStart) / 1000;
+  testDuration.add(durationSec, { testName: testNameTag });
 }

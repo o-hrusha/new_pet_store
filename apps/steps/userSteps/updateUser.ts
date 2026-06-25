@@ -7,9 +7,13 @@ export class UpdateUser {
     const { getUserByUserNameResp } = stepData;
 
     return group("Update User by username", function () {
-      const userInfo = getUserByUserNameResp.json() as { username: string };
+      const userInfo = getUserByUserNameResp.json() as {
+        username: string;
+        id: number;
+      };
       const userName = userInfo.username;
-      console.log("username after stringify: " + userName);
+      const userId = userInfo.id;
+
       const updateUserBody = {
         ...userInfo,
         username: `${userName}_updated`,
@@ -29,11 +33,12 @@ export class UpdateUser {
       check(updatedUserResp, {
         "status equals 200": (r) => r.status === 200,
       });
-
+      check(updatedUserResp, {
+        "Check user is updated": (r) => r.json("message") === `${userId}`,
+      });
 
       const updatedUserName: string = updateUserBody.username;
 
-      console.log("userName: " + updatedUserName);
       return {
         ...stepData,
         updatedUserName,

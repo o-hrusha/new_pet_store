@@ -21,17 +21,18 @@ export class CreateUser {
         Accept: "application/json",
       };
 
-      const createdUserResp = requestManager.userService.createUser(
-        userBody,
-        {
-          headers: headers,
-        },
-      );
+      const createdUserResp = requestManager.userService.createUser(userBody, {
+        headers: headers,
+      });
 
-      check(createdUserResp, { "status equals 200": (r) => r.status === 200 });
-      
-      
-      
+      check(createdUserResp, {
+        "status equals 200": (r) => r.status === 200,
+      });
+
+      check(createdUserResp, {
+        "Check user is created": (r) => r.json("message") === `${userBody.id}`,
+      });
+
       return { ...stepData, userName, createdUserResp };
     });
   }

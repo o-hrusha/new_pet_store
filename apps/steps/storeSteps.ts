@@ -13,7 +13,7 @@ export class StoreSteps {
         complete: true,
       };
 
-      const resp = requestManager.storeService.createOrder(
+      const createdOrderResp = requestManager.storeService.createOrder(
         orderBody,
         {
           headers: {
@@ -23,12 +23,14 @@ export class StoreSteps {
         },
       );
 
-      check(resp, {
+      check(createdOrderResp, {
         "status equals 200": (r) => r.status === 200,
       });
+      check(createdOrderResp, {
+        "Check order is created": (r) => r.json("id") === orderBody.id,
+      });
 
-      const oderId = (resp.json() as { id: number }).id;
-      console.log("Order ID: " + oderId);
+      const oderId = (createdOrderResp.json() as { id: number }).id;
 
       return {
         ...stepData,
@@ -50,8 +52,6 @@ export class StoreSteps {
       check(getOrderByOrderIdResp, {
         "Match that order has expected orderId": (r) => r.json("id") === oderId,
       });
-
-      console.log("Order info: " + getOrderByOrderIdResp.body);
 
       return {
         ...stepData,

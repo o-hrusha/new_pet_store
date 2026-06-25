@@ -18,10 +18,9 @@ export class DeleteUser {
         "status equals 200": (r) => r.status === 200,
       });
       check(resp, {
-        "Check user is deleted": (r) =>
-          r.json("message") === `${userName}`,
+        "Check user is deleted": (r) => r.json("message") === `${userName}`,
       });
-      
+
       return stepData;
     });
   }
