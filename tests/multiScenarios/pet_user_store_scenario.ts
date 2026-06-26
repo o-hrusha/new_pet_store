@@ -1,4 +1,3 @@
-import { Gauge } from "k6/metrics";
 // @ts-ignore
 import { default as storeFlow } from "../scenarios/storeScenarios.ts";
 // @ts-ignore
@@ -6,12 +5,11 @@ import { default as userFlow } from "../scenarios/userScenarios.ts";
 // @ts-ignore
 import { default as petFlow } from "../scenarios/viewPendingPetFlow.ts";
 
-export const testDuration = new Gauge("test_duration");
 const testNameTag = `storeFlow + userFlow + petFlow`;
 
 export const options = {
   tags: {
-    testRun: testNameTag,
+    testName: testNameTag,
   },
   scenarios: {
     StoreScenario: {
@@ -38,17 +36,29 @@ export const options = {
 
 // setup
 export function setup() {
-  return { testStart: Date.now() };
+  const testStart = Date.now();
+  const setupData = `alex stated test at: ${new Date(testStart)}`;
+  console.log(setupData);
+  return { testStart, setupData };
 }
 
-export function StoreScenario() {
+export function StoreScenario(data: { testStart: number }) {
+  console.log(
+    `StoreScenario started after: ${(Date.now() - data.testStart) / 1000}`,
+  );
   return storeFlow();
 }
 
-export function UserScenario() {
+export function UserScenario(data: { testStart: number }) {
+  console.log(
+    `UserScenario started after: ${(Date.now() - data.testStart) / 1000}`,
+  );
   return userFlow();
 }
-export function PetScenario() {
+export function PetScenario(data: { testStart: number }) {
+  console.log(
+    `PetScenario started after: ${(Date.now() - data.testStart) / 1000}`,
+  );
   return petFlow();
 }
 
@@ -56,5 +66,5 @@ export function PetScenario() {
 export function teardown(data: { testStart: number }) {
   const testEnd = Date.now();
   const durationSec = (testEnd - data.testStart) / 1000;
-  testDuration.add(durationSec, { testName: testNameTag });
+  console.log(`Alex test duration was: ${durationSec}`);
 }

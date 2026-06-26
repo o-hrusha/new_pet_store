@@ -31,7 +31,6 @@ export class StoreSteps {
       });
 
       const oderId = (createdOrderResp.json() as { id: number }).id;
-
       return {
         ...stepData,
         oderId,
