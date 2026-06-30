@@ -1,13 +1,13 @@
-import { CreateUser } from "./userSteps/createUser.ts";
+import { CreateRandomUser } from "./userSteps/createUser.ts";
 import { GetUserByUserName } from "./userSteps/getUserByUserName.ts";
-import { UpdateUser } from "./userSteps/updateUser.ts";
+import { UpdateUserByBody } from "./userSteps/updateUserByBody.ts";
 import { DeleteUser } from "./userSteps/deleteUser.ts";
-import { CheckUserNotExists } from "./userSteps/checkUserNotExists.ts";
+import { CheckUserNotExistsByUserName } from "./userSteps/checkUserNotExistsByUserName.ts";
 
 export class UserSteps {
-  createUser = new CreateUser();
+  createUser = new CreateRandomUser();
   getUserByUserName = new GetUserByUserName();
-  updateUser = new UpdateUser();
+  updateUser = new UpdateUserByBody();
   deleteUser = new DeleteUser();
-  checkUserNotExists: CheckUserNotExists = new CheckUserNotExists();
+  checkUserNotExistsByUserName: CheckUserNotExistsByUserName = new CheckUserNotExistsByUserName();
 }

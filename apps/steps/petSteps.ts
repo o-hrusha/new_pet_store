@@ -4,7 +4,7 @@ import { requestManager } from "../requestsManager.ts";
 import { randomItem } from "../../framework/k6Libs/k6Util.js";
 
 export class PetSteps {
-  getAvailablePets<T extends object>(stepData: T = {} as T) {
+  getRandomAvailablePet<T extends object>(stepData: T = {} as T) {
     return group("Get Available Pets", function () {
       const resp = requestManager.petService.findPetsByStatus("available");
       const pets = resp.json() as { status: string }[];
@@ -22,7 +22,7 @@ export class PetSteps {
     });
   }
 
-  getSoldPets<T extends object>(stepData: T = {} as T) {
+  getRandomSoldPet<T extends object>(stepData: T = {} as T) {
     return group("Get Sold Pets", function () {
       const resp = requestManager.petService.findPetsByStatus("sold");
       const pets = resp.json() as { status: string }[];
@@ -40,7 +40,7 @@ export class PetSteps {
     });
   }
 
-  getPendingPets<T extends object>(stepData: T = {} as T) {
+  getRandomPendingPet<T extends object>(stepData: T = {} as T) {
     return group("Get Pending Pets", function () {
       const resp = requestManager.petService.findPetsByStatus("pending");
       const pets = resp.json() as { status: string }[];
@@ -60,17 +60,18 @@ export class PetSteps {
     });
   }
 
-  getPetById<T extends { pendingPetId: number }>(stepData: T) {
-    const { pendingPetId } = stepData;
+  getPetById<T extends {}>(stepData: T, petId: number) {
     return group("Get Pet By Id", function () {
-      const resp = requestManager.petService.findPetsById(pendingPetId);
+      const resp = requestManager.petService.findPetsById(petId);
 
       check(resp, {
         "status equals 200": (r) => r.status === 200,
       });
       check(resp, {
-        "Check pet is found by Id": (r) => r.json("id") === pendingPetId,
+        "Check pet is found by Id": (r) => r.json("id") === petId,
       });
+      const petData = resp.json();
+      return { ...stepData, petData };
     });
   }
 }

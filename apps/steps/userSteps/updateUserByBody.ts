@@ -1,13 +1,11 @@
-import { check, group } from "k6";
+import { check, group, JSONValue } from "k6";
 import { requestManager } from "../../requestsManager.ts";
 import type { Response } from "k6/http";
 
-export class UpdateUser {
-  execute<T extends { getUserByUserNameResp: Response }>(stepData: T) {
-    const { getUserByUserNameResp } = stepData;
-
+export class UpdateUserByBody {
+  execute<T extends {}>(stepData: T, body: JSONValue) {
     return group("Update User by username", function () {
-      const userInfo = getUserByUserNameResp.json() as {
+      const userInfo = body as {
         username: string;
         id: number;
       };

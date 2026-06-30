@@ -30,26 +30,25 @@ export class StoreSteps {
         "Check order is created": (r) => r.json("id") === orderBody.id,
       });
 
-      const oderId = (createdOrderResp.json() as { id: number }).id;
+      const orderId = (createdOrderResp.json() as { id: number }).id;
       return {
         ...stepData,
-        oderId,
+        orderId,
       };
     });
   }
 
-  getOrderByOrderId<T extends { oderId: number }>(stepData: T) {
+  getOrderByOrderId<T extends {}>(stepData: T, orderId: number) {
     return group("Get Order by ID", function () {
-      const { oderId } = stepData;
-
       const getOrderByOrderIdResp =
-        requestManager.storeService.getOrderByOrderId(oderId);
+        requestManager.storeService.getOrderByOrderId(orderId);
 
       check(getOrderByOrderIdResp, {
         "status equals 200": (r) => r.status === 200,
       });
       check(getOrderByOrderIdResp, {
-        "Match that order has expected orderId": (r) => r.json("id") === oderId,
+        "Match that order has expected orderId": (r) =>
+          r.json("id") === orderId,
       });
 
       return {

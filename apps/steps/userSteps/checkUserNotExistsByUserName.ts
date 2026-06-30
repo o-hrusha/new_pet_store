@@ -1,11 +1,9 @@
-import { check, group, JSONValue } from "k6";
+import { check, group } from "k6";
 import { requestManager } from "../../requestsManager.ts";
 
-export class CheckUserNotExists {
-  execute<T extends { userName: string }>(stepData: T) {
+export class CheckUserNotExistsByUserName {
+  execute<T extends {}>(stepData: T, userName: string) {
     return group("Get User by username", function () {
-      const { userName } = stepData;
-
       const getUserByUserNameResp =
         requestManager.userService.getUserByUserName(userName);
 

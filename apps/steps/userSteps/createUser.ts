@@ -1,7 +1,7 @@
 import { check, group } from "k6";
 import { requestManager } from "../../requestsManager.ts";
 
-export class CreateUser {
+export class CreateRandomUser {
   execute<T extends object>(stepData: T = {} as T) {
     return group("Create User", function () {
       const userBody = {
@@ -14,7 +14,7 @@ export class CreateUser {
         phone: "+380985036524",
         userStatus: 1,
       };
-      const userName = userBody.username;
+      const createdUserName = userBody.username;
 
       const headers = {
         "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export class CreateUser {
         "Check user is created": (r) => r.json("message") === `${userBody.id}`,
       });
 
-      return { ...stepData, userName, createdUserResp };
+      return { ...stepData, createdUserName, createdUserResp };
     });
   }
 }

@@ -1,12 +1,9 @@
-import { check, group, JSONValue } from "k6";
+import { check, group } from "k6";
 import { requestManager } from "../../requestsManager.ts";
-import type { Response } from "k6/http";
 
 export class GetUserByUserName {
-  execute<T extends { userName: string }>(stepData: T) {
+  execute<T extends {}>(stepData: T, userName: string) {
     return group("Get User by username", function () {
-      const { userName } = stepData;
-
       const getUserByUserNameResp =
         requestManager.userService.getUserByUserName(userName);
 
@@ -17,10 +14,11 @@ export class GetUserByUserName {
         "Match that user has expected userName": (r) =>
           r.json("username") === userName,
       });
+      const userData = getUserByUserNameResp.json();
 
       return {
         ...stepData,
-        getUserByUserNameResp,
+        userData,
       };
     });
   }

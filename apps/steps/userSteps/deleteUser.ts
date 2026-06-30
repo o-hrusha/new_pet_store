@@ -3,10 +3,7 @@ import { requestManager } from "../../requestsManager.ts";
 import type { Response } from "k6/http";
 
 export class DeleteUser {
-  execute<T extends { getUserByUserNameResp: Response }>(stepData: T) {
-    const { getUserByUserNameResp } = stepData;
-    const userInfo = getUserByUserNameResp.json() as { username: string };
-    const userName = userInfo.username;
+  execute<T extends {}>(stepData: T, userName: string) {
     return group("Delete User by username", function () {
       const resp: Response = requestManager.userService.deleteUser(userName, {
         headers: {
@@ -21,7 +18,9 @@ export class DeleteUser {
         "Check user is deleted": (r) => r.json("message") === `${userName}`,
       });
 
-      return stepData;
+      return {
+        ...stepData,
+      };
     });
   }
 }
